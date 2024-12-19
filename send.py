@@ -6,6 +6,10 @@ HOST='local'
 def init_connection(host):
     return pika.BlockingConnection(pika.ConnectionParameters(host=host))
 
+def send():
+    pass
+
+
 
 def main():
     con = init_connection(HOST)
@@ -18,5 +22,6 @@ def main():
     con.close()
 
 
-if __name__ == "main":
+
+if __name__ == "__main__":
     main()

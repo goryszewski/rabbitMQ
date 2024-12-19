@@ -1,0 +1,7 @@
+.vscode
+.gitignore
+.dockerignore
+terraform
+Makefile
+README.md
+Dockerfile
