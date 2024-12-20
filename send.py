@@ -1,7 +1,11 @@
 import pika
+import argparse
 
-#static
-HOST='local'
+parser = argparse.ArgumentParser()
+parser.add_argument("host", help="host rabbitmq")
+args=parser.parse_args()
+
+HOST=args.host
 
 def init_connection(host):
     return pika.BlockingConnection(pika.ConnectionParameters(host=host))
@@ -14,7 +18,7 @@ def send():
 def main():
     con = init_connection(HOST)
     channel = con.channel()
-    channel.queue_declare(queue="test")
+    channel.queue_declare(queue="hello")
 
     channel.basic_publish(exchange='',routing_key="hello",body="Hello World!")
 

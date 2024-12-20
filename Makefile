@@ -13,3 +13,11 @@ terraform_plan: terraform_init
 terraform_apply: terraform_plan
 	@echo "[MAKE] Terraform Apply"
 	cd ./terraform && terraform apply --auto-approve $(Terraform_VARS)
+
+## 
+
+send: 
+	python3 ./send.py  192.168.122.223
+
+recv: 
+	python3 ./receive.py  192.168.122.223
