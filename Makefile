@@ -16,6 +16,9 @@ terraform_apply: terraform_plan
 
 ## 
 
+v:
+	source ./venv/bin/activate
+
 send: 
 	python3 ./send.py  192.168.122.223
 
