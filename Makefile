@@ -24,3 +24,6 @@ send:
 
 recv: 
 	python3 ./receive.py  192.168.122.223
+
+docker1:
+	docker compose up -d
