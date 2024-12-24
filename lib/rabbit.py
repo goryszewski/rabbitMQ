@@ -2,7 +2,7 @@ import pika
 
 
 class Queue:
-    def __init__(self, host, queue, auto_ack=True, exchange=""):
+    def __init__(self, host, queue, auto_ack=True, exchange="") -> None:
         self.host = host
         self.queue = queue
         self.routing_key = queue
@@ -11,14 +11,16 @@ class Queue:
         self.exchange = exchange
 
         self.__connect()
-
         self.__channel()
+        self.__initRMQ()
 
-    def __connect(self):
+    def __connect(self) -> None:
         self.conn = pika.BlockingConnection(pika.ConnectionParameters(host=self.host))
 
-    def __channel(self):
+    def __channel(self) -> None:
         self.channel = self.conn.channel()
+
+    def __initRMQ(self) -> None:
         self.channel.queue_declare(queue=self.queue)
 
     def send(self, body):
@@ -34,5 +36,5 @@ class Queue:
         )
         self.channel.start_consuming()
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.conn.close()

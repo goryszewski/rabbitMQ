@@ -6,8 +6,12 @@ parser.add_argument("host", help="host rabbitmq")
 args = parser.parse_args()
 
 
-def callback(ch, method, properties, body):
+def callbackACK(ch, method, properties, body):
+    print(f"callback body: {body}")
+    ch.basic_ack(delivery_tag=method.delivery_tag)
 
+
+def callback(ch, method, properties, body):
     print(f"callback body: {body}")
 
 
