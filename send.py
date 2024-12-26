@@ -1,9 +1,9 @@
 from lib.rabbit import Queue
-from flask import Flask
+from flask import Flask, request, jsonify
 from time import sleep
 from dotenv import load_dotenv
 import signal
-import sys,os
+import sys,os,json
 load_dotenv()
 import argparse
 
@@ -26,10 +26,12 @@ app = Flask(__name__)
 # args = parser.parse_args()
 objectQ = Queue(host=os.environ.get("RABBITMQ_HOST"), queue=os.environ.get("RABBITMQ_QUEUE_NAME"))
 
-@app.route("/<name>")
+@app.route("/<name>",methods=['POST'])
 def hello(name):
-    objectQ.send(f"test1  -{name}")
-    return "done"
+    content = request.json
+    json_data = json.dumps(content)
+    objectQ.send(json_data)
+    return jsonify({"name":name})
 
 # def main():
 #     c = 1

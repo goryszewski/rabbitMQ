@@ -27,3 +27,6 @@ recv:
 
 docker1:
 	docker compose up -d
+
+test:
+	curl -XPOST 127.0.0.1:5000/name -H "Content-Type: application/json" -d '{"data":1}'

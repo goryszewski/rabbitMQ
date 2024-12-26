@@ -1,5 +1,5 @@
 from lib.rabbit import Queue
-import argparse
+import argparse,json
 
 parser = argparse.ArgumentParser()
 parser.add_argument("host", help="host rabbitmq")
@@ -12,7 +12,8 @@ def callbackACK(ch, method, properties, body):
 
 
 def callback(ch, method, properties, body):
-    print(f"callback body: {body}")
+    data = json.loads(body)
+    print(f"callback body: {data}")
 
 
 def main():
