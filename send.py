@@ -1,4 +1,5 @@
 from lib.rabbit import Queue
+from lib.schema import PayloadSchema
 from flask import Flask, request, jsonify
 from time import sleep
 from dotenv import load_dotenv
@@ -18,20 +19,22 @@ def signal_handler(signal, frame):
     STATE = True
 
 app = Flask(__name__)
-
-# signal.signal(signal.SIGINT, signal_handler)
-
-# parser = argparse.ArgumentParser()
-# parser.add_argument("host", help="host rabbitmq")
-# args = parser.parse_args()
+app.debug = True
+payload_Schema = PayloadSchema()
 objectQ = Queue(host=os.environ.get("RABBITMQ_HOST"), queue=os.environ.get("RABBITMQ_QUEUE_NAME"))
 
 @app.route("/<name>",methods=['POST'])
 def hello(name):
-    content = request.json
-    json_data = json.dumps(content)
+
+    json_data = request.get_json()
+
+    print("DEBUG:",json_data)
+    error = payload_Schema.validate(json_data)
+    if error:
+        return error,422
+    json_data = json.dumps(json_data)
     objectQ.send(json_data)
-    return jsonify({"name":name})
+    return jsonify({"status":"ok"})
 
 # def main():
 #     c = 1
