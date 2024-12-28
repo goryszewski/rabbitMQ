@@ -28,6 +28,7 @@ class Queue:
             exchange=self.exchange, routing_key=self.routing_key, body=body
         )
 
+
     def recv(self, callback):
 
         self.channel.queue_declare(queue=self.queue)

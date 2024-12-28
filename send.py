@@ -1,5 +1,5 @@
 from lib.rabbit import Queue
-from lib.schema import PayloadSchema
+from lib.schema import PayloadSchemaBad
 from flask import Flask, request, jsonify
 from time import sleep
 from dotenv import load_dotenv
@@ -20,7 +20,7 @@ def signal_handler(signal, frame):
 
 app = Flask(__name__)
 app.debug = True
-payload_Schema = PayloadSchema()
+payload_Schema = PayloadSchemaBad()
 objectQ = Queue(host=os.environ.get("RABBITMQ_HOST"), queue=os.environ.get("RABBITMQ_QUEUE_NAME"))
 
 @app.route("/<name>",methods=['POST'])
