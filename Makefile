@@ -20,10 +20,10 @@ v:
 	source ./venv/bin/activate
 
 send: 
-	python3 ./send.py  192.168.122.223
+	flask --app send run 
 
 recv: 
-	python3 ./receive.py  192.168.122.223
+	python3 ./receive.py
 
 docker1:
 	docker compose up -d

@@ -1,11 +1,12 @@
 from lib.rabbit import Queue
-import argparse,json
+import json, os
+from dotenv import load_dotenv
 from lib.schema import PayloadSchema
 
-parser = argparse.ArgumentParser()
-parser.add_argument("host", help="host rabbitmq")
-args = parser.parse_args()
+load_dotenv()
+
 payload_Schema = PayloadSchema()
+
 
 def callbackACK(ch, method, properties, body):
     data = json.loads(body)
@@ -21,13 +22,17 @@ def callbackACK(ch, method, properties, body):
 
 
 def callback(ch, method, properties, body):
-    data = json.loads(body)
-    print(f"callback body: {data}")
+    print(f"callback body: {body}")
 
 
 def main():
-    objectQ = Queue(host=args.host, queue="hello",auto_ack=False)
-    objectQ.recv(callback=callbackACK)
+    objectQ = Queue(
+        host=os.environ.get("RABBITMQ_HOST"),
+        queue=os.environ.get("RABBITMQ_QUEUE_NAME"),
+        user=os.environ.get("RABBITMQ_USER"),
+        password=os.environ.get("RABBITMQ_PASS"),
+    )
+    objectQ.recv(callback=callback)
 
 
 if __name__ == "__main__":

@@ -2,9 +2,12 @@ import pika
 
 
 class Queue:
-    def __init__(self, host, queue, auto_ack=True, exchange="") -> None:
+    def __init__(self, host, user, password, queue, auto_ack=True, exchange="") -> None:
         self.host = host
+        print(f"HOST: {self.host}")
         self.queue = queue
+        self.user = user
+        self.password = password
         self.routing_key = queue
 
         self.auto_ack = auto_ack
@@ -15,7 +18,11 @@ class Queue:
         self.__initRMQ()
 
     def __connect(self) -> None:
-        self.conn = pika.BlockingConnection(pika.ConnectionParameters(host=self.host))
+        credentials = pika.PlainCredentials(self.user, self.password)
+
+        parameters = pika.ConnectionParameters(credentials=credentials, host=self.host)
+
+        self.conn = pika.BlockingConnection(parameters)
 
     def __channel(self) -> None:
         self.channel = self.conn.channel()
@@ -27,7 +34,6 @@ class Queue:
         self.channel.basic_publish(
             exchange=self.exchange, routing_key=self.routing_key, body=body
         )
-
 
     def recv(self, callback):
 
