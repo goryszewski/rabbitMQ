@@ -10,3 +10,19 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
+  client:
+    container_name: client
+    build:
+      context: .
+      dockerfile: ./Dockerfile.client
+    depends_on:
+      - rabbitmq
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: ./Dockerfile.api
+    ports:
+      - '5000:5000'
+    depends_on:
+      - rabbitmq

@@ -1,0 +1,9 @@
+FROM python
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip3 install -r req.txt
+
+CMD [ "python3", "-u", "./receive.py"]
