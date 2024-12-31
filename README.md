@@ -1,1 +1,1 @@
-Learning Rabbit MQ
+Learning Rabbit MQ and pandas

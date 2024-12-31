@@ -33,3 +33,5 @@ test:
 
 test2:
 	curl -XPOST 127.0.0.1:5000/name -H "Content-Type: application/json" -d '{"data1":1}'
+
+# https://raw.githubusercontent.com/jbryer/CompStats/refs/heads/master/Data/titanic3.csv
