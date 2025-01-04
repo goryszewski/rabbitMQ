@@ -1,22 +1,64 @@
 version: '3.8'
 
 services:
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    ports:
-      - '5672:5672'
-      - '15672:15672'
+  rmq01:
+    image: rabbitmq:4
+    container_name: rmq01
+    hostname: rmq01
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - ./config/enabled_plugins:/etc/rabbitmq/enabled_plugins 
+      - ./config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./config/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
+      - ./config/rabbitmq-env.conf:/etc/rabbitmq/rabbitmq-env.conf
+  rmq02:
+    image: rabbitmq:4
+    container_name: rmq02
+    hostname: rmq02
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - ./config/enabled_plugins:/etc/rabbitmq/enabled_plugins 
+      - ./config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./config/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
+      - ./config/rabbitmq-env.conf:/etc/rabbitmq/rabbitmq-env.conf
+
+  rmq03:
+    image: rabbitmq:4
+    container_name: rmq03
+    hostname: rmq03
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - ./config/enabled_plugins:/etc/rabbitmq/enabled_plugins 
+      - ./config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./config/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
+      - ./config/rabbitmq-env.conf:/etc/rabbitmq/rabbitmq-env.conf
+
+  haproxy:
+    image: haproxy
+    volumes:
+      - ./config//haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      - rmq01
+      - rmq02
+      - rmq03
+    ports:
+      - 15672:15672
+      - 5672:5672
+
   client:
     container_name: client
     build:
       context: .
       dockerfile: ./Dockerfile.client
     depends_on:
-      - rabbitmq
+      - rmq01
+      - rmq02
   api:
     container_name: api
     build:
@@ -25,4 +67,5 @@ services:
     ports:
       - '5000:5000'
     depends_on:
-      - rabbitmq
+      - rmq01
+      - rmq02
