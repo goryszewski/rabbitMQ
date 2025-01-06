@@ -4,7 +4,6 @@ import pika
 class Queue:
     def __init__(self, host, user, password, queue, auto_ack=True, exchange="") -> None:
         self.host = host
-        print(f"HOST: {self.host}")
         self.queue = queue
         self.user = user
         self.password = password
@@ -28,7 +27,9 @@ class Queue:
         self.channel = self.conn.channel()
 
     def __initRMQ(self) -> None:
-        self.channel.queue_declare(queue=self.queue)
+        self.channel.queue_declare(
+            queue=self.queue, arguments={"x-queue-type": "quorum"}, durable=True
+        )
 
     def send(self, body):
         self.channel.basic_publish(
@@ -36,8 +37,6 @@ class Queue:
         )
 
     def recv(self, callback):
-
-        self.channel.queue_declare(queue=self.queue)
         self.channel.basic_consume(
             queue=self.queue, on_message_callback=callback, auto_ack=self.auto_ack
         )

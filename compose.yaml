@@ -55,6 +55,7 @@ services:
       - 5672:5672
 
   client:
+    restart: on-failure:5 
     container_name: client
     build:
       context: .
