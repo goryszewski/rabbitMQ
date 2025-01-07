@@ -14,6 +14,7 @@ objectQ = Queue(
     queue=os.environ.get("RABBITMQ_QUEUE_NAME"),
     user=os.environ.get("RABBITMQ_USER"),
     password=os.environ.get("RABBITMQ_PASS"),
+    arguments={"x-queue-type": "quorum"},
 )
 
 
@@ -29,20 +30,3 @@ def hello(name):
     json_data = json.dumps(json_data)
     objectQ.send(json_data)
     return jsonify({"status": "ok"})
-
-
-# def main():
-#     c = 1
-#     while True:
-#         if STATE:
-#             break
-#         c = c + 1
-
-#         sleep(0.1)
-#         print(f"Send msg")
-
-
-# if __name__ == "__main__":
-#     main()
-
-#     print("normal end")

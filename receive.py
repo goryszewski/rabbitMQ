@@ -31,6 +31,7 @@ def main():
         queue=os.environ.get("RABBITMQ_QUEUE_NAME"),
         user=os.environ.get("RABBITMQ_USER"),
         password=os.environ.get("RABBITMQ_PASS"),
+        arguments={"x-queue-type": "quorum"},
     )
     objectQ.recv(callback=callback)
 
