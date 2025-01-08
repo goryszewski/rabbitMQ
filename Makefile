@@ -31,8 +31,8 @@ docker1:
 test:
 	curl -XPOST 127.0.0.1:5000/name -H "Content-Type: application/json" -d '{"data":1}'
 
-test2:
-	curl -XPOST 127.0.0.1:5000/name -H "Content-Type: application/json" -d '{"data1":1}'
+looptest:
+	python3 ./loop_rest.py
 
 format:
 	black --config ./pyproject.toml  lib/*.py ./*.py

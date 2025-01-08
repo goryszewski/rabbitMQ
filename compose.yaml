@@ -11,9 +11,11 @@ services:
     volumes:
       - rmq01-data:/var/lib/rabbitmq/mnesia/
       - ./config/enabled_plugins:/etc/rabbitmq/enabled_plugins 
-      - ./config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./config/rabbitmq-init.conf:/etc/rabbitmq/rabbitmq.conf
       - ./config/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
       - ./config/rabbitmq-env.conf:/etc/rabbitmq/rabbitmq-env.conf
+      - ./config/rabbitmq-definitions.json:/etc/rabbitmq/rabbitmq-definitions.json
+
   rmq02:
     image: rabbitmq:4.0.4-management
     container_name: rmq02
@@ -54,9 +56,12 @@ services:
       - 15672:15672
       - 5672:5672
 
-  client:
+  client01:
     restart: on-failure:5 
-    container_name: client
+    container_name: client01
+    environment:
+      RABBITMQ_USER: admin
+      RABBITMQ_PASS: admin
     build:
       context: .
       dockerfile: ./Dockerfile.client
@@ -64,9 +69,27 @@ services:
       - rmq01
       - rmq02
       - rmq03
+
+  client02:
+    restart: on-failure:5 
+    container_name: client02
+    environment:
+      RABBITMQ_USER: recv
+      RABBITMQ_PASS: recv
+    build:
+      context: .
+      dockerfile: ./Dockerfile.client
+    depends_on:
+      - rmq01
+      - rmq02
+      - rmq03
+
   api:
     restart: on-failure:5 
     container_name: api
+    environment:
+      RABBITMQ_USER: send
+      RABBITMQ_PASS: send
     build:
       context: .
       dockerfile: ./Dockerfile.api

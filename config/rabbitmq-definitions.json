@@ -1,0 +1,33 @@
+{
+    "rabbit_version": "4.0.3",
+    "users": [
+      {
+        "name": "send",
+        "password_hash": "jR4mQtWzVg5P+jp4HzQ+JkvWDTKmCqmWEA3dYll8O5BdpngJ",
+        "tags": ["administrator"]
+      },
+      {
+        "name": "recv",
+        "password_hash": "6zldQiC7woFl0e4KemXJoVRaVeXuNwvv7HNun9V0BNjG6Bkm",
+        "tags": ["administrator"]
+      }
+    ],
+    "permissions": [
+      {
+        "user": "send",
+        "vhost": "/",
+        "configure": ".*",
+        "write": ".*",
+        "read": ".*"
+  
+      },
+      {
+        "user": "recv",
+        "vhost": "/",
+        "configure": ".*",
+        "write": ".*",
+        "read": ".*"
+  
+      }
+    ]
+  }
