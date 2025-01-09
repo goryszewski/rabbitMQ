@@ -90,6 +90,8 @@ services:
     environment:
       RABBITMQ_USER: send
       RABBITMQ_PASS: send
+    volumes:
+      - ./:/app
     build:
       context: .
       dockerfile: ./Dockerfile.api

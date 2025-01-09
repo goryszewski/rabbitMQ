@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 ENV FLASK_APP=send.py
-
+ENV FLASK_DEBUG=1
 RUN pip3 install -r req.txt
 
 CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]

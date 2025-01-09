@@ -7,7 +7,6 @@ import os, json
 load_dotenv()
 
 app = Flask(__name__)
-app.debug = True
 payload_Schema = PayloadSchemaBad()
 objectQ = Queue(
     host=os.environ.get("RABBITMQ_HOST"),
@@ -15,6 +14,7 @@ objectQ = Queue(
     user=os.environ.get("RABBITMQ_USER"),
     password=os.environ.get("RABBITMQ_PASS"),
     arguments={"x-queue-type": "quorum"},
+    logger=app.logger,
 )
 
 
@@ -23,10 +23,14 @@ def hello(name):
 
     json_data = request.get_json()
 
-    print("DEBUG:", json_data)
+    app.logger.info("test log")
     error = payload_Schema.validate(json_data)
     if error:
         return error, 422
     json_data = json.dumps(json_data)
-    objectQ.send(json_data)
-    return jsonify({"status": "ok"})
+    status = objectQ.send(json_data)
+    return jsonify({"status": status})
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
