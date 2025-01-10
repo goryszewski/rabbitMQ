@@ -23,7 +23,7 @@ def callbackACK(ch, method, properties, body):
 
 def callback(ch, method, properties, body):
     print(f"callback body: {body}")
-
+    # DOTO write galera
 
 def main():
     objectQ = Queue(

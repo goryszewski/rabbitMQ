@@ -3,7 +3,7 @@ import pika
 
 class Queue:
     def __init__(
-        self, host, user, password, queue, logger={}, auto_ack=True, durable=True, exchange="", arguments={}
+        self, host, user, password, queue, auto_ack=True, durable=True, exchange="", logger={}, arguments={}, exchange_type=[]
     ) -> None:
         self.host = host
         self.queue = queue
@@ -14,6 +14,8 @@ class Queue:
         self.durable = durable
         self.auto_ack = auto_ack
         self.exchange = exchange
+        self.routing_keys = []
+        self.exchange_type = exchange_type
         self.arguments = arguments
         self.logger = logger
         self.init = False
@@ -24,6 +26,11 @@ class Queue:
         if self.init:
             self.__channel()
             self.__initRMQ()
+        
+        if self.exchange:
+            self.__initEXCH()
+            self.__bind()
+
 
     def __connect(self) -> None:
         try:
@@ -43,6 +50,13 @@ class Queue:
 
     def __initRMQ(self) -> None:
         self.channel.queue_declare(queue=self.queue, arguments=self.arguments, durable=self.durable)
+
+    def __initEXCH(self) -> None:
+        self.channel.exchange_declare(exchange=self.exchange, exchange_type=self.exchange_type)
+
+    def __bind(self) -> None:
+        for routing_key in self.routing_keys:
+            self.channel.queue_bind(exchange=self.exchange, queue=self.queue, routing_key=routing_key)
 
     def send(self, body) -> bool:
         if self.init:

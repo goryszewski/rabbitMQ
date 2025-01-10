@@ -1,13 +1,9 @@
-version: '3.8'
-
 services:
   rmq01:
+    restart: on-failure
     image: rabbitmq:4.0.4-management
     container_name: rmq01
     hostname: rmq01
-    environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin
     volumes:
       - rmq01-data:/var/lib/rabbitmq/mnesia/
       - ./config/enabled_plugins:/etc/rabbitmq/enabled_plugins 
@@ -17,34 +13,35 @@ services:
       - ./config/rabbitmq-definitions.json:/etc/rabbitmq/rabbitmq-definitions.json
 
   rmq02:
+    restart: on-failure
     image: rabbitmq:4.0.4-management
     container_name: rmq02
     hostname: rmq02
-    environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin
     volumes:
       - rmq02-data:/var/lib/rabbitmq/mnesia/
       - ./config/enabled_plugins:/etc/rabbitmq/enabled_plugins 
       - ./config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - ./config/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
       - ./config/rabbitmq-env.conf:/etc/rabbitmq/rabbitmq-env.conf
+    depends_on:
+      - rmq01
 
   rmq03:
+    restart: on-failure
     image: rabbitmq:4.0.4-management
     container_name: rmq03
     hostname: rmq03
-    environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin
     volumes:
       - rmq03-data:/var/lib/rabbitmq/mnesia/
       - ./config/enabled_plugins:/etc/rabbitmq/enabled_plugins 
       - ./config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - ./config/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
       - ./config/rabbitmq-env.conf:/etc/rabbitmq/rabbitmq-env.conf
+    depends_on:
+      - rmq01
 
   haproxy:
+    restart: on-failure
     image: haproxy
     volumes:
       - ./config/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
@@ -57,11 +54,11 @@ services:
       - 5672:5672
 
   client01:
-    restart: on-failure:5 
+    restart: on-failure
     container_name: client01
     environment:
-      RABBITMQ_USER: admin
-      RABBITMQ_PASS: admin
+      RABBITMQ_USER: recv01
+      RABBITMQ_PASS: recv
     build:
       context: .
       dockerfile: ./Dockerfile.client
@@ -71,10 +68,10 @@ services:
       - rmq03
 
   client02:
-    restart: on-failure:5 
+    restart: on-failure
     container_name: client02
     environment:
-      RABBITMQ_USER: recv
+      RABBITMQ_USER: recv02
       RABBITMQ_PASS: recv
     build:
       context: .
@@ -85,7 +82,7 @@ services:
       - rmq03
 
   api:
-    restart: on-failure:5 
+    restart: on-failure
     container_name: api
     environment:
       RABBITMQ_USER: send

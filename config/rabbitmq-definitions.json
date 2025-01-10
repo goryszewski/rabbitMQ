@@ -7,27 +7,58 @@
         "tags": ["administrator"]
       },
       {
-        "name": "recv",
+        "name": "recv01",
         "password_hash": "6zldQiC7woFl0e4KemXJoVRaVeXuNwvv7HNun9V0BNjG6Bkm",
         "tags": ["administrator"]
+      },
+      {
+        "name": "recv02",
+        "password_hash": "6zldQiC7woFl0e4KemXJoVRaVeXuNwvv7HNun9V0BNjG6Bkm",
+        "tags": ["administrator"]
+      },
+      {
+        "name":"admin",
+        "password_hash":"BfSL+63Y4ThzXqas6gwd32DTVAzIXCAbheIGpwaTvSl2FQ/l",
+        "tags": ["administrator"]
       }
+
     ],
     "permissions": [
+      {
+        "user": "admin",
+        "vhost": "/",
+        "configure": ".*",
+        "write": ".*",
+        "read": ".*"
+      },
       {
         "user": "send",
         "vhost": "/",
         "configure": ".*",
         "write": ".*",
         "read": ".*"
-  
       },
       {
-        "user": "recv",
+        "user": "recv01",
         "vhost": "/",
         "configure": ".*",
         "write": ".*",
         "read": ".*"
-  
+      },
+      {
+        "user": "recv02",
+        "vhost": "/",
+        "configure": ".*",
+        "write": ".*",
+        "read": ".*"
       }
-    ]
+    ],
+    "parameters": [],
+    "policies": [],
+    "vhosts": [
+      {"name":"/"}
+    ],
+    "queues": [],
+    "exchanges": [],
+    "bindings": []
   }
