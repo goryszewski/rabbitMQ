@@ -59,6 +59,11 @@ services:
     environment:
       RABBITMQ_USER: recv01
       RABBITMQ_PASS: recv
+      RABBITMQ_QUEUE_NAME: hello1
+      RABBITMQ_EXCHANGE: logs
+      RABBITMQ_EXCHANGE_TYPE: fanout
+    volumes:
+      - ./:/app
     build:
       context: .
       dockerfile: ./Dockerfile.client
@@ -73,6 +78,11 @@ services:
     environment:
       RABBITMQ_USER: recv02
       RABBITMQ_PASS: recv
+      RABBITMQ_QUEUE_NAME: hello
+      RABBITMQ_EXCHANGE: ""
+      RABBITMQ_EXCHANGE_TYPE: ""
+    volumes:
+      - ./:/app
     build:
       context: .
       dockerfile: ./Dockerfile.client
@@ -87,6 +97,7 @@ services:
     environment:
       RABBITMQ_USER: send
       RABBITMQ_PASS: send
+      RABBITMQ_QUEUE_NAME: hello
     volumes:
       - ./:/app
     build:

@@ -3,18 +3,28 @@ import pika
 
 class Queue:
     def __init__(
-        self, host, user, password, queue, auto_ack=True, durable=True, exchange="", logger={}, arguments={}, exchange_type=[]
+        self,
+        host,
+        user,
+        password,
+        logger,
+        queue=None,
+        routing_key="",
+        auto_ack=True,
+        durable=True,
+        exchange="",
+        arguments={},
+        exchange_type: str = "",
     ) -> None:
         self.host = host
         self.queue = queue
         self.user = user
         self.password = password
-        self.routing_key = queue
+        self.routing_key = routing_key
 
         self.durable = durable
         self.auto_ack = auto_ack
         self.exchange = exchange
-        self.routing_keys = []
         self.exchange_type = exchange_type
         self.arguments = arguments
         self.logger = logger
@@ -22,15 +32,18 @@ class Queue:
         self.__prep()
 
     def __prep(self) -> None:
+        queue = None
         self.__connect()
         if self.init:
             self.__channel()
-            self.__initRMQ()
-        
-        if self.exchange:
-            self.__initEXCH()
-            self.__bind()
+            if self.queue:
+                queue = self.__initRMQ()
+                self.logger.info("Create queue")
 
+            if self.exchange:
+                self.__initEXCH()
+            if queue and self.exchange:
+                self.__bind(queue.method.queue)
 
     def __connect(self) -> None:
         try:
@@ -41,37 +54,38 @@ class Queue:
             self.conn = pika.BlockingConnection(parameters)
             self.init = True
         except Exception as e:
-            if self.logger:
-                self.logger.error(e)
+            self.logger.error(e)
             self.init = False
 
     def __channel(self) -> None:
         self.channel = self.conn.channel()
 
-    def __initRMQ(self) -> None:
-        self.channel.queue_declare(queue=self.queue, arguments=self.arguments, durable=self.durable)
+    def __initRMQ(self):
+        result = self.channel.queue_declare(queue=self.queue, arguments=self.arguments, durable=self.durable)
+        self.logger.info(f"Init:__initRMQ Queue={self.queue} arguments={self.arguments}")
+        return result
 
     def __initEXCH(self) -> None:
         self.channel.exchange_declare(exchange=self.exchange, exchange_type=self.exchange_type)
+        self.logger.info(f"Init:__initEXCH: {self.exchange} - {self.exchange_type}")
 
-    def __bind(self) -> None:
-        for routing_key in self.routing_keys:
-            self.channel.queue_bind(exchange=self.exchange, queue=self.queue, routing_key=routing_key)
+    def __bind(self, queue) -> None:
+        self.channel.queue_bind(exchange=self.exchange, queue=queue)
+        self.logger.info(f"Init:__bind exchange={self.exchange}, queue={queue}")
 
-    def send(self, body) -> bool:
+    def send(self, message) -> bool:
         if self.init:
             try:
-                self.channel.basic_publish(exchange=self.exchange, routing_key=self.routing_key, body=body)
+                self.logger.info(self.routing_key)
+                self.channel.basic_publish(exchange=self.exchange, routing_key=self.routing_key, body=message)
             except Exception as e:
-                if self.logger:
-                    self.logger.error("ERROR send")
-                    self.logger.error(e)
+                self.logger.error("ERROR send")
+                self.logger.error(e)
                 self.__prep()
                 return False
             return True
         self.__prep()
-        if self.logger:
-            self.logger.error("No init")
+        self.logger.error("No init")
         return False
 
     def recv(self, callback):

@@ -1,14 +1,27 @@
 import requests, time
 
-url: str = "http://127.0.0.1:5000/name"
+direct: str = "http://127.0.0.1:5000/direct"
+logs: str = "http://127.0.0.1:5000/logs"
 headers = {"Content-Type": "application/json"}
-data = {"data1": 1}
+count: int = 0
+
 while True:
     try:
-        response = requests.post(url=url, headers=headers, json=data)
+        count += 1
+        data = {"data1": count}
+        response = requests.post(url=direct, headers=headers, json=data)
+        print(f"Code: {response.status_code}")
+        # print(f"Headers: {response.headers}")
+        print(f"Headers: {response.json()}")
+
+        count += 1
+        data = {"data1": count}
+
+        response = requests.post(url=logs, headers=headers, json=data)
         print(f"Code: {response.status_code}")
         # print(f"Headers: {response.headers}")
         print(f"Headers: {response.json()}")
     except Exception as e:
         print(e)
+        time.sleep(5)
     time.sleep(0.1)
