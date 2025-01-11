@@ -66,7 +66,7 @@ class Queue:
         return result
 
     def __initEXCH(self) -> None:
-        self.channel.exchange_declare(exchange=self.exchange, exchange_type=self.exchange_type)
+        self.channel.exchange_declare(exchange=self.exchange, exchange_type=self.exchange_type, durable=self.durable)
         self.logger.info(f"Init:__initEXCH: {self.exchange} - {self.exchange_type}")
 
     def __bind(self, queue) -> None:
