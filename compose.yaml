@@ -1,4 +1,12 @@
 services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+    volumes:
+      - db-data:/var/lib/mysql 
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
   rmq01:
     restart: on-failure
     image: rabbitmq:4.0.4-management
@@ -114,3 +122,4 @@ volumes:
   rmq01-data:
   rmq02-data:
   rmq03-data:
+  db-data:
