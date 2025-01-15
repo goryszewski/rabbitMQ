@@ -3,11 +3,17 @@ import json, os
 from dotenv import load_dotenv
 from lib.schema import PayloadSchema
 import logging
+import mysql.connector
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
-logging.getLogger(__name__)
+test = logging.getLogger(__name__)
+test.setLevel(logging.INFO)
 payload_Schema = PayloadSchema()
+
+# TEST SQL
+cnx = mysql.connector.connect(user="client", password="client", host="10.0.0.184", database="cloud")
+cursor = cnx.cursor()
 
 
 def callbackACK(ch, method, properties, body):
@@ -24,8 +30,11 @@ def callbackACK(ch, method, properties, body):
 
 
 def callback(ch, method, properties, body):
-    print(f"callback body: {body}")
-    # DOTO write galera
+    data = json.loads(body)
+    test.info(f"callback body: {data}")
+    task = f"INSERT INTO task (data1) VALUES ({data['data1']})"
+    cursor.execute(task)
+    cnx.commit()
 
 
 def main():
@@ -38,7 +47,7 @@ def main():
         password=os.environ.get("RABBITMQ_PASS"),
         queue=os.environ.get("RABBITMQ_QUEUE_NAME"),
         arguments={"x-queue-type": "quorum"},
-        logger=logging,
+        logger=test,
         exchange=os.environ.get("RABBITMQ_EXCHANGE"),  # "logs",
         exchange_type=os.environ.get("RABBITMQ_EXCHANGE_TYPE"),  # "fanout",
     )
@@ -52,3 +61,5 @@ if __name__ == "__main__":
             main()
         except Exception as e:
             print(e)
+    cursor.close()
+    cnx.close()
