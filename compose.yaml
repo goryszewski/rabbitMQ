@@ -99,6 +99,25 @@ services:
       - rmq02
       - rmq03
 
+  client03:
+    restart: on-failure
+    container_name: client03
+    environment:
+      RABBITMQ_USER: recv01
+      RABBITMQ_PASS: recv
+      RABBITMQ_QUEUE_NAME: hello3
+      RABBITMQ_EXCHANGE: logs_topic
+      RABBITMQ_EXCHANGE_TYPE: topic
+    volumes:
+      - ./:/app
+    build:
+      context: .
+      dockerfile: ./Dockerfile.client
+    depends_on:
+      - rmq01
+      - rmq02
+      - rmq03
+
   api:
     restart: on-failure
     container_name: api

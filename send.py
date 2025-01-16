@@ -8,18 +8,18 @@ load_dotenv()
 
 app = Flask(__name__)
 payload_Schema = PayloadSchemaBad()
-objectQ = Queue(
+object_fanout = Queue(
     host=os.environ.get("RABBITMQ_HOST"),
-    # queue=os.environ.get("RABBITMQ_QUEUE_NAME"),
     user=os.environ.get("RABBITMQ_USER"),
     password=os.environ.get("RABBITMQ_PASS"),
     arguments={"x-queue-type": "quorum"},
+
     logger=app.logger,
     exchange="logs",
     exchange_type="fanout",
 )
 
-objectQ_test = Queue(
+objectQ_direct = Queue(
     host=os.environ.get("RABBITMQ_HOST"),
     queue=os.environ.get("RABBITMQ_QUEUE_NAME"),
     routing_key=os.environ.get("RABBITMQ_QUEUE_NAME"),
@@ -29,9 +29,21 @@ objectQ_test = Queue(
     logger=app.logger,
 )
 
+objectQ_topic= Queue(
+    host=os.environ.get("RABBITMQ_HOST"),
+    queue=os.environ.get("RABBITMQ_QUEUE_NAME"),
+    user=os.environ.get("RABBITMQ_USER"),
+    password=os.environ.get("RABBITMQ_PASS"),
+    routing_key="",
+    arguments={"x-queue-type": "quorum"},
+    logger=app.logger,
+    exchange="logs_topic",
+    exchange_type="topic",
+)
+
 
 @app.route("/logs", methods=["POST"])
-def hello1():
+def logs():
 
     json_data = request.get_json()
 
@@ -40,12 +52,12 @@ def hello1():
     if error:
         return error, 422
     json_data = json.dumps(json_data)
-    status = objectQ.send(message=json_data)
+    status = object_fanout.send(message=json_data,routing_key="")
     return jsonify({"status": status})
 
 
 @app.route("/direct", methods=["POST"])
-def hello2():
+def direct():
 
     json_data = request.get_json()
 
@@ -54,9 +66,21 @@ def hello2():
     if error:
         return error, 422
     json_data = json.dumps(json_data)
-    status = objectQ_test.send(message=json_data)
+    status = objectQ_direct.send(message=json_data,routing_key="")
     return jsonify({"status": status})
 
+@app.route("/topic", methods=["POST"])
+def topic():
+
+    json_data = request.get_json()
+
+    app.logger.info("test log")
+    error = payload_Schema.validate(json_data)
+    if error:
+        return error, 422
+    json_data = json.dumps(json_data)
+    status = objectQ_topic.send(message=json_data ,routing_key="")
+    return jsonify({"status": status})
 
 if __name__ == "__main__":
     app.run(debug=True)

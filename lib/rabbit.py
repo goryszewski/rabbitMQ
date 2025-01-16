@@ -73,11 +73,12 @@ class Queue:
         self.channel.queue_bind(exchange=self.exchange, queue=queue)
         self.logger.info(f"Init:__bind exchange={self.exchange}, queue={queue}")
 
-    def send(self, message) -> bool:
+    def send(self, message,routing_key) -> bool:
         if self.init:
             try:
+                r_key = routing_key if routing_key else self.routing_key
                 self.logger.info(self.routing_key)
-                self.channel.basic_publish(exchange=self.exchange, routing_key=self.routing_key, body=message)
+                self.channel.basic_publish(exchange=self.exchange, routing_key=r_key, body=message)
             except Exception as e:
                 self.logger.error("ERROR send")
                 self.logger.error(e)

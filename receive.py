@@ -12,8 +12,13 @@ test.setLevel(logging.INFO)
 payload_Schema = PayloadSchema()
 
 # TEST SQL
-cnx = mysql.connector.connect(user="client", password="client", host="10.0.0.184", database="cloud")
-cursor = cnx.cursor()
+sql=False
+try:
+    cnx = mysql.connector.connect(user="client", password="client", host="10.0.0.184", database="cloud")
+    cursor = cnx.cursor()
+    sql=True
+except Exception as e:
+    print(e)
 
 
 def callbackACK(ch, method, properties, body):
@@ -33,8 +38,9 @@ def callback(ch, method, properties, body):
     data = json.loads(body)
     test.info(f"callback body: {data}")
     task = f"INSERT INTO task (data1) VALUES ({data['data1']})"
-    cursor.execute(task)
-    cnx.commit()
+    if sql:
+        cursor.execute(task)
+        cnx.commit()
 
 
 def main():
