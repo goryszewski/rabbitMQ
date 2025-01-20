@@ -3,7 +3,7 @@ import json, os
 from dotenv import load_dotenv
 from lib.schema import PayloadSchema
 import logging
-import mysql.connector
+from lib.mysql import TMySql
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
@@ -14,8 +14,7 @@ payload_Schema = PayloadSchema()
 # TEST SQL
 sql=False
 try:
-    cnx = mysql.connector.connect(user="client", password="client", host="10.0.0.184", database="cloud")
-    cursor = cnx.cursor()
+    cnx = TMySql(user="client", password="client", host="10.0.0.184", database="cloud")
     sql=True
 except Exception as e:
     print(e)
@@ -39,8 +38,7 @@ def callback(ch, method, properties, body):
     test.info(f"callback body: {data}")
     task = f"INSERT INTO task (data1) VALUES ({data['data1']})"
     if sql:
-        cursor.execute(task)
-        cnx.commit()
+        cnx.put(task)
 
 
 def main():

@@ -3,6 +3,7 @@ from lib.schema import PayloadSchemaBad
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import os, json
+from lib.mysql import TMySql
 
 load_dotenv()
 
@@ -40,6 +41,14 @@ objectQ_topic= Queue(
     exchange="logs_topic",
     exchange_type="topic",
 )
+
+cnx= TMySql(user="client", password="client", host="10.0.0.184", database="cloud")
+
+@app.route("/db", methods=["GET"])
+def db():
+    data=cnx.get("select count(*) from task")
+    app.logger.info(f"LOG SQL: {data}")
+    return {}
 
 
 @app.route("/logs", methods=["POST"])
