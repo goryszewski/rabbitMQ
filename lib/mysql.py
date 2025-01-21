@@ -24,3 +24,8 @@ class TMySql:
         self.cursor.execute(sql)
         self.cnx.commit()
 
+    def __del__(self):
+        self.cursor.close()
+        self.cnx.close()
+
+

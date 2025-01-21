@@ -14,7 +14,7 @@ payload_Schema = PayloadSchema()
 # TEST SQL
 sql=False
 try:
-    cnx = TMySql(user="client", password="client", host="10.0.0.184", database="cloud")
+    cnx = TMySql(user="client", password="client", host="10.0.0.155", database="cloud")
     sql=True
 except Exception as e:
     print(e)
@@ -65,5 +65,3 @@ if __name__ == "__main__":
             main()
         except Exception as e:
             print(e)
-    cursor.close()
-    cnx.close()

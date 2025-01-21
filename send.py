@@ -42,7 +42,7 @@ objectQ_topic= Queue(
     exchange_type="topic",
 )
 
-cnx= TMySql(user="client", password="client", host="10.0.0.184", database="cloud")
+cnx= TMySql(user="client", password="client", host="10.0.0.155", database="cloud")
 
 @app.route("/db", methods=["GET"])
 def db():
