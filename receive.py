@@ -12,10 +12,14 @@ test.setLevel(logging.INFO)
 payload_Schema = PayloadSchema()
 
 # TEST SQL
-sql=False
+cnx = None
 try:
-    cnx = TMySql(user="client", password="client", host="10.0.0.155", database="cloud")
-    sql=True
+    cnx = TMySql(
+        user=os.environ.get("SQL_USER"),
+        password=os.environ.get("SQL_PASS"),
+        host=os.environ.get("SQL_HOST"),
+        database=os.environ.get("SQL_DB"),
+    )
 except Exception as e:
     print(e)
 
@@ -37,7 +41,7 @@ def callback(ch, method, properties, body):
     data = json.loads(body)
     test.info(f"callback body: {data}")
     task = f"INSERT INTO task (data1) VALUES ({data['data1']})"
-    if sql:
+    if cnx:
         cnx.put(task)
 
 

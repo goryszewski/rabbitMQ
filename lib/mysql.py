@@ -16,16 +16,16 @@ class TMySql:
     def _getcursor(self):
         self.cursor = self.cnx.cursor()
 
-    def get(self,sql):
+    def get(self, sql):
         self.cursor.execute(sql)
-        return self.cursor.fetchall()
-    
-    def put(self,sql):
+        output = self.cursor.fetchall()
+        self.cnx.commit()
+        return output
+
+    def put(self, sql):
         self.cursor.execute(sql)
         self.cnx.commit()
 
     def __del__(self):
         self.cursor.close()
         self.cnx.close()
-
-

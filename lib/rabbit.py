@@ -73,7 +73,7 @@ class Queue:
         self.channel.queue_bind(exchange=self.exchange, queue=queue)
         self.logger.info(f"Init:__bind exchange={self.exchange}, queue={queue}")
 
-    def send(self, message,routing_key) -> bool:
+    def send(self, message, routing_key) -> bool:
         if self.init:
             try:
                 r_key = routing_key if routing_key else self.routing_key

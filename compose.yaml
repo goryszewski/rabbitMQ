@@ -62,6 +62,9 @@ services:
       - 5672:5672
 
   client01:
+    dns:
+      - 10.17.3.2
+    dns_search: autok8s.xyz
     restart: on-failure
     container_name: client01
     environment:
@@ -70,6 +73,10 @@ services:
       RABBITMQ_QUEUE_NAME: hello1
       RABBITMQ_EXCHANGE: logs
       RABBITMQ_EXCHANGE_TYPE: fanout
+      SQL_HOST: node01.autok8s.xyz
+      SQL_USER: client
+      SQL_PASS: client
+      SQL_DB: cloud
     volumes:
       - ./:/app
     build:
@@ -81,6 +88,9 @@ services:
       - rmq03
 
   client02:
+    dns:
+      - 10.17.3.2
+    dns_search: autok8s.xyz
     restart: on-failure
     container_name: client02
     environment:
@@ -89,6 +99,10 @@ services:
       RABBITMQ_QUEUE_NAME: hello
       RABBITMQ_EXCHANGE: ""
       RABBITMQ_EXCHANGE_TYPE: ""
+      SQL_HOST: node02.autok8s.xyz
+      SQL_USER: client
+      SQL_PASS: client
+      SQL_DB: cloud
     volumes:
       - ./:/app
     build:
@@ -100,6 +114,9 @@ services:
       - rmq03
 
   client03:
+    dns:
+      - 10.17.3.2
+    dns_search: autok8s.xyz
     restart: on-failure
     container_name: client03
     environment:
@@ -108,6 +125,10 @@ services:
       RABBITMQ_QUEUE_NAME: hello3
       RABBITMQ_EXCHANGE: logs_topic
       RABBITMQ_EXCHANGE_TYPE: topic
+      SQL_HOST: node03.autok8s.xyz
+      SQL_USER: client
+      SQL_PASS: client
+      SQL_DB: cloud
     volumes:
       - ./:/app
     build:
@@ -120,11 +141,17 @@ services:
 
   api:
     restart: on-failure
+    dns:
+      - 10.17.3.2
+    dns_search: autok8s.xyz
     container_name: api
     environment:
       RABBITMQ_USER: send
       RABBITMQ_PASS: send
       RABBITMQ_QUEUE_NAME: hello
+      SQL_USER: client
+      SQL_PASS: client
+      SQL_DB: cloud
     volumes:
       - ./:/app
     build:
